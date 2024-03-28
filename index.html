@@ -1,0 +1,101 @@
+<html>
+    <head>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                font-family: Amatic, serif;
+                color: #ffffff;
+                font-size: 24px;
+                filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.5));
+            }
+
+            ul {
+                position: absolute;
+                bottom: 0;
+            }
+
+            @font-face {
+                font-family: 'Amatic';
+                src: url('Mamelon-4-Hi-Regular.ttf');
+            }
+        </style>
+        <script src="comfy.js"></script>
+        <script>
+            const username = 'kujukuju';
+
+            const getEntryIndex = (string) => {
+                const list = document.getElementById('task-list');
+
+                let foundIndex = -1;
+                for (let i = 0; i < list.children.length; i++) {
+                    if (list.children[i].innerText.toLowerCase().startsWith(string.toLowerCase())) {
+                        if (foundIndex >= 0) {
+                            return Number.NaN;
+                        }
+
+                        foundIndex = i;
+                    }
+                }
+
+                if (foundIndex >= 0) {
+                    return foundIndex;
+                }
+
+                return Number.NaN;
+            };
+
+            ComfyJS.onCommand = (user, command, message, flags, extra) => {
+                if (flags.broadcaster && command === 'task') {
+                    const commandParts = message.split(' ');
+                    const list = document.getElementById('task-list');
+                    
+                    if (commandParts[0] === 'add') {
+                        const taskString = commandParts.slice(1).join(' ');
+
+                        const entry = document.createElement('li');
+                        entry.innerText = taskString;
+
+                        list.insertBefore(entry, list.firstChild);
+                    } else if (commandParts[0] === 'remove') {
+                        let index = Number.parseInt(commandParts[1]);
+                        if (Number.isNaN(index)) {
+                            const taskString = commandParts.slice(1).join(' ');
+                            index = getEntryIndex(taskString);
+                        }
+
+                        if (!Number.isNaN(index)) {
+                            list.removeChild(list.children[index]);
+                        }
+                    } else if (commandParts[0] === 'done') {
+                        let index = Number.parseInt(commandParts[1]);
+                        if (Number.isNaN(index)) {
+                            const taskString = commandParts.slice(1).join(' ');
+                            index = getEntryIndex(taskString);
+                        }
+
+                        if (!Number.isNaN(index)) {
+                            list.children[index].style.textDecoration = 'line-through';
+                        }
+                    } else if (commandParts[0] === 'undone') {
+                        let index = Number.parseInt(commandParts[1]);
+                        if (Number.isNaN(index)) {
+                            const taskString = commandParts.slice(1).join(' ');
+                            index = getEntryIndex(taskString);
+                        }
+
+                        if (!Number.isNaN(index)) {
+                            list.children[index].style.textDecoration = 'none';
+                        }
+                    }
+                }
+            }
+            
+            ComfyJS.Init(username);
+        </script>
+    </head>
+    <body>
+        <ul id="task-list">
+        </ul>
+    </body>
+</html>
