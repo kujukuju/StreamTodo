@@ -50,7 +50,9 @@
             };
 
             ComfyJS.onCommand = (user, command, message, flags, extra) => {
-                if (flags.broadcaster && command === 'task') {
+                const reward = extra.customRewardId === 'fb966e19-44f3-49d5-950a-424e12134a7b';
+                console.log('reward', reward);
+                if ((flags.broadcaster || reward) && command === 'task') {
                     const commandParts = message.split(' ');
                     const list = document.getElementById('task-list');
                     
